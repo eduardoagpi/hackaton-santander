@@ -4,26 +4,15 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.scalars.ScalarsConverterFactory
 import java.util.Date
+import javax.inject.Inject
 
 const val DELAY_CALL_SERVICE_TIME_MILLIS = 5000L
-class ServiceRepositoryImpl : ServiceRepository {
-
-    private val apiService: ApiService
+class ServiceRepositoryImpl @Inject constructor(private val apiService: ApiService) : ServiceRepository {
 
     private val flows = mutableMapOf<ServiceEnum, Flow<ServiceStatus>>()
 
     private var shouldEmit = false
-
-    init {
-        val retrofit = Retrofit.Builder()
-            .baseUrl("https://hp-api.onrender.com")
-            .addConverterFactory(ScalarsConverterFactory.create())
-            .build()
-        apiService = retrofit.create(ApiService::class.java)
-    }
 
     override fun getServiceStatusFlow(service: ServiceEnum): Flow<ServiceStatus> {
         val flow = flows[service]
@@ -62,11 +51,12 @@ class ServiceRepositoryImpl : ServiceRepository {
     private fun ServiceEnum.callService(): suspend ()-> Response<String> {
         return when(this) {
             ServiceEnum.Characters -> apiService::getCharacters
-            ServiceEnum.CharactersByID -> apiService::getCharacters
-            ServiceEnum.Students -> apiService::getCharacters
-            ServiceEnum.Staff -> apiService::getCharacters
-            ServiceEnum.Spells -> apiService::getCharacters
-            ServiceEnum.CharactersInHouse ->apiService::getCharacters
+            ServiceEnum.CharactersByID -> {{apiService.getCharacterById("9e3f7ce4-b9a7-4244-b709-dae5c1f1d4a8") } }
+            ServiceEnum.Students -> apiService::getStudents
+            ServiceEnum.Staff -> apiService::getStaff
+            ServiceEnum.Spells -> apiService::getSpells
+            ServiceEnum.CharactersInHouse ->  { { apiService.getCharactersInHouse("Slytherin") }
+            }
         }
     }
 

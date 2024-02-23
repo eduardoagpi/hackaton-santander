@@ -12,22 +12,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.lifecycleScope
-import com.example.santanderhackaton.data.ApiService
 import com.example.santanderhackaton.data.ServiceEnum
 import com.example.santanderhackaton.data.ServiceRepository
-import com.example.santanderhackaton.data.ServiceRepositoryImpl
 import com.example.santanderhackaton.ui.theme.SantanderHackatonTheme
-import kotlinx.coroutines.flow.collect
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import java.util.Date
-import java.util.concurrent.Flow
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
+    @Inject
     lateinit var repository: ServiceRepository
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        repository = ServiceRepositoryImpl()
         setContent {
             SantanderHackatonTheme {
                 // A surface container using the 'background' color from the theme
@@ -44,7 +42,7 @@ class MainActivity : ComponentActivity() {
     override fun onStart() {
         super.onStart()
         lifecycleScope.launch {
-            repository.getServiceStatusFlow(ServiceEnum.Characters).collect{
+            repository.getServiceStatusFlow(ServiceEnum.CharactersByID).collect{
                 Log.v("Hackaton","Received response event " + it.response)
             }
         }
