@@ -31,6 +31,8 @@ class ServiceRepositoryImpl @Inject constructor(private val apiService: ApiServi
             var responseBody = ""
             var httpCode: Int
             try {
+                val simulateFailure = System.currentTimeMillis() % 3L == 0L
+                if(simulateFailure) throw Exception("Failure Simulated")
                 val response = serviceEnum.callService().invoke()
                 httpCode = response.code()
                 responseBody = response.body() ?: ""
