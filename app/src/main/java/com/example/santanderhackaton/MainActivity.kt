@@ -43,7 +43,9 @@ class MainActivity : ComponentActivity() {
         super.onStart()
         lifecycleScope.launch {
             repository.getServiceStatusFlow(ServiceEnum.CharactersByID).collect{
-                Log.v("Hackaton","Received response event " + it.response)
+                val responseLength = 100
+                val previewResponse =  it.response.substring(0, if(it.response.length > responseLength) responseLength else 0)
+                Log.v("Hackaton","Received response event <<" + it.name + ">> http status: [" + it.httpCode + "] " + previewResponse +"...")
             }
         }
     }

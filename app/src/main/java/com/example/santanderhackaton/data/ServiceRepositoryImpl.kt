@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.flow
 import retrofit2.Response
 import java.util.Date
 import javax.inject.Inject
+import kotlin.random.Random
 
 const val DELAY_CALL_SERVICE_TIME_MILLIS = 5000L
 class ServiceRepositoryImpl @Inject constructor(private val apiService: ApiService) : ServiceRepository {
@@ -31,13 +32,13 @@ class ServiceRepositoryImpl @Inject constructor(private val apiService: ApiServi
             var responseBody = ""
             var httpCode: Int
             try {
-                val simulateFailure = System.currentTimeMillis() % 3L == 0L
-                if(simulateFailure) throw Exception("Failure Simulated")
+                val randomInt = Random.nextInt(1, 101)
+                if(randomInt< 40) throw Exception("Failure Simulated")
                 val response = serviceEnum.callService().invoke()
                 httpCode = response.code()
                 responseBody = response.body() ?: ""
             }catch (e: Exception) {
-                e.printStackTrace()
+                //e.printStackTrace()
                 httpCode = 500
             }
 
